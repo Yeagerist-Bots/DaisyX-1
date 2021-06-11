@@ -1,19 +1,20 @@
-# Copyright (C) 2021 TheHamkerCat & TeamDaisyX
+# Part of this file Ported From William Butcher Bot :- https://github.com/thehamkercat/WilliamButcherBot/edit/dev/wbb/modules/webss.py .
+# Credits to WilliamButcherBot.
 
-# Ported some parts From WilliamButcherBot.
-# Pokedex Inline Credit Red-Aura[Madepranav]
-# Credits Goes to WilliamButcherBot
-
-# This file is part of Daisy (Telegram Bot)
-
-
-import datetime
+import io
 import re
+import sys
+import traceback
+
 import time
+
+# Extra Plugins Provided By Team Daisy X
+# Ported From WilliamButcher Bot.
+# All Credit Goes to WilliamButcherBot
 import urllib.request
 from datetime import datetime
+import datetime
 from typing import List
-
 import aiohttp
 import requests
 from bs4 import BeautifulSoup
@@ -29,14 +30,30 @@ from pyrogram.types import (
     InlineQueryResultPhoto,
     InputTextMessageContent,
 )
-from search_engine_parser import GoogleSearch
 from tswift import Song
 from youtubesearchpython import VideosSearch
 
-from DaisyX.config import get_str_key
-from DaisyX.function.inlinehelper import *
+from DaisyX.function.inlinehelper import (
+    alive_function,
+    arq,
+    deezer_func,
+    google_search_func,
+    inline_help_func,
+    paste_func,
+    saavn_func,
+    shortify,
+    torrent_func,
+    translate_func,
+    urban_func,
+    wall_func,
+    webss,
+)
 from DaisyX.function.pluginhelpers import fetch, json_prettify
 from DaisyX.services.pyrogram import pbot as app
+from DaisyX.config import get_str_key
+from search_engine_parser import GoogleSearch
+import wikipedia
+from wikipedia.exceptions import DisambiguationError, PageError
 
 OPENWEATHERMAP_ID = get_str_key("OPENWEATHERMAP_ID", "")
 TIME_API_KEY = get_str_key("TIME_API_KEY", required=False)
@@ -66,13 +83,11 @@ class AioHttp:
 
 __mod_name__ = "Inline"
 __help__ = """
- <b> INLINE BOT SERVICE OF @DAISYXBOT </b> 
+ <b> INLINE BOT SERVICE OF @RengokuKyujoro_RealmsBot </b> 
  
 <i> I'm more efficient when added as group admin. By the way these commands can be used by anyone in a group via inline.</i>
-
 <b>Syntax</b>
-   @DaisyXBot [command] [query]
-
+   @RengokuKyujoro_RealmsBot [command] [query]
 <b> Commands Available</b>
 - alive - Check Bot's Stats.
 - yt [query] - Youtube Search.
@@ -91,6 +106,7 @@ __help__ = """
 - imdb [QUERY] - Search movies on imdb.
 - spaminfo [ID] - Get spam info of the user.
 - lyrics [QUERY] - Get lyrics of the song.
+- math [PROBLEM] - Solves math problem.
 - paste [TEXT] - Paste text on pastebin.
 - define [WORD] - Get definition from Dictionary.
 - synonyms [WORD] - Get synonyms from Dictionary.
@@ -104,19 +120,14 @@ __help__ = """
 - app [QUERY] - Search for apps in playstore.
 - gh [QUERY] - Search github.
 - so [QUERY] - Search stack overflow.
-- wiki [QUERY] - Search wikipedia.
-- ping - Check ping rate.
-- pokedex [TEXT]: Pokemon Search
 """
 
 __MODULE__ = "Inline"
 __HELP__ = """
- ==>> **INLINE BOT SERVICE OF @DAISYXBOT** <<==
+ ==>> **INLINE BOT SERVICE OF @RengokuKyujoro_RealmsBot** <<==
 `I'm more efficient when added as group admin. By the way these commands can be used by anyone in a group via inline.`
-
    >> Syntax <<
-@DaisyXBot [command] [query]
-
+@RengokuKyujoro_RealmsBot [command] [query]
    >> Commands Available <<
 - **alive** - __Check Bot's Stats.__
 - **yt [query]** - __Youtube Search.__
@@ -135,6 +146,7 @@ __HELP__ = """
 - **imdb [QUERY]** - __Search movies on imdb.__
 - **spaminfo [id]** - __Get spam info of the user.__
 - **lyrics [QUERY]** - __Get lyrics of given song.__
+- **math [PROBLEM]** - __Solves math problem.__
 - **paste [TEXT]** - __Paste text on pastebin.__
 - **define [WORD]** - __Get definition from Dictionary.__
 - **synonyms [WORD]** - __Get synonyms from Dictionary.__
@@ -148,9 +160,6 @@ __HELP__ = """
 - **app [QUERY]** - __Search for apps on playstore.
 - **gh [QUERY]** - __Search github.__
 - **so [QUERY]** - __Search stack overfolw.__
-- **wiki [QUERY]** - __Search wikipedia.__
-- **ping** - __Check ping rate.__
-- **pokedex [TEXT]** - __Pokemon Search.__
 """
 
 
@@ -192,23 +201,6 @@ async def inline_query_handler(client, query):
             tex = text.split(None, 1)[1]
             answerss = await shortify(tex)
             await client.answer_inline_query(query.id, results=answerss, cache_time=2)
-        elif text.split()[0] == "wiki":
-            if len(text.split()) < 2:
-                await client.answer_inline_query(
-                    query.id,
-                    results=answers,
-                    switch_pm_text="Wikipedia | wiki [QUERY]",
-                    switch_pm_parameter="inline",
-                )
-                return
-            tex = text.split(None, 1)[1].strip()
-            answerss = await wiki_func(answers, tex)
-            await client.answer_inline_query(query.id, results=answerss, cache_time=2)
-
-        elif text.split()[0] == "ping":
-            answerss = await ping_func(answers)
-            await client.answer_inline_query(query.id, results=answerss, cache_time=2)
-            return
 
         elif text.split()[0] == "yt":
             answers = []
@@ -522,18 +514,46 @@ async def inline_query_handler(client, query):
                 )
             )
             await client.answer_inline_query(query.id, cache_time=0, results=results)
-        elif text.split()[0] == "pokedex":
-            if len(text.split()) < 2:
-                await client.answer_inline_query(
-                    query.id,
-                    results=answers,
-                    switch_pm_text="Pokemon [text]",
-                    switch_pm_parameter="pokedex",
+        elif text.split()[0] == "math":
+            lel = text.split(None, 1)[1]
+            results = []
+            cmd = lel
+            old_stderr = sys.stderr
+            old_stdout = sys.stdout
+            redirected_output = sys.stdout = io.StringIO()
+            redirected_error = sys.stderr = io.StringIO()
+            stdout, stderr, exc = None, None, None
+            san = f"print({cmd})"
+            try:
+                await aexec(san, client)
+            except Exception:
+                exc = traceback.format_exc()
+            stdout = redirected_output.getvalue()
+            stderr = redirected_error.getvalue()
+            sys.stdout = old_stdout
+            sys.stderr = old_stderr
+            evaluation = ""
+            if exc:
+                evaluation = exc
+            elif stderr:
+                evaluation = stderr
+            elif stdout:
+                evaluation = stdout
+            else:
+                evaluation = "Sorry Daisy can't find result for the given equation"
+            final_output = "**EQUATION**: `{}` \n\n **SOLUTION**: \n`{}` \n".format(
+                cmd, evaluation
+            )
+            results.append(
+                InlineQueryResultArticle(
+                    title="Math Problem Solved",
+                    description=f"Solution - {evaluation} \nClick to see more",
+                    input_message_content=InputTextMessageContent(
+                        final_output, disable_web_page_preview=False
+                    ),
                 )
-                return
-            pokedex = text.split(None, 1)[1].strip()
-            Pokedex = await pokedexinfo(answers, pokedex)
-            await client.answer_inline_query(query.id, results=Pokedex, cache_time=2)
+            )
+            await client.answer_inline_query(query.id, cache_time=0, results=results)
         elif text.split()[0] == "paste":
             tex = text.split(None, 1)[1]
             answerss = await paste_func(answers, tex)
@@ -767,10 +787,10 @@ async def inline_query_handler(client, query):
                 )
             )
             await client.answer_inline_query(query.id, cache_time=0, results=results)
-
+            
         elif text.split()[0] == "weather":
             results = []
-            sample_url = "https://api.openweathermap.org/data/2.5/weather?q={}&APPID={}&units=metric"
+            sample_url = ("https://api.openweathermap.org/data/2.5/weather?q={}&APPID={}&units=metric")
             input_str = text.split(None, 1)[1]
             async with aiohttp.ClientSession() as session:
                 response_api_zero = await session.get(
@@ -782,7 +802,8 @@ async def inline_query_handler(client, query):
                 country_time_zone = int(response_api["timezone"])
                 sun_rise_time = int(response_api["sys"]["sunrise"]) + country_time_zone
                 sun_set_time = int(response_api["sys"]["sunset"]) + country_time_zone
-                lol = """ 
+                lol = (
+                    """ 
         WEATHER INFO GATHERED
         Location: {}
         Temperature ☀️: {}°С
@@ -793,19 +814,20 @@ async def inline_query_handler(client, query):
         Clouds ☁️: {}hpa
         Sunrise 🌤: {} {}
         Sunset 🌝: {} {}""".format(
-                    input_str,
-                    response_api["main"]["temp"],
-                    response_api["main"]["temp_min"],
-                    response_api["main"]["temp_max"],
-                    response_api["main"]["humidity"],
-                    response_api["wind"]["speed"],
-                    response_api["clouds"]["all"],
-                    # response_api["main"]["pressure"],
-                    time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(sun_rise_time)),
-                    country_code,
-                    time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(sun_set_time)),
-                    country_code,
-                )
+                        input_str,
+                        response_api["main"]["temp"],
+                        response_api["main"]["temp_min"],
+                        response_api["main"]["temp_max"],
+                        response_api["main"]["humidity"],
+                        response_api["wind"]["speed"],
+                        response_api["clouds"]["all"],
+                        # response_api["main"]["pressure"],
+                        time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(sun_rise_time)),
+                        country_code,
+                        time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(sun_set_time)),
+                        country_code,
+                    )
+                )            
                 results.append(
                     InlineQueryResultArticle(
                         title=f"Weather Information",
@@ -815,10 +837,8 @@ async def inline_query_handler(client, query):
                         ),
                     )
                 )
-                await client.answer_inline_query(
-                    query.id, cache_time=0, results=results
-                )
-
+                await client.answer_inline_query(query.id, cache_time=0, results=results)      
+                
         elif text.split()[0] == "datetime":
             results = []
             gay = text.split(None, 1)[1]
@@ -828,9 +848,11 @@ async def inline_query_handler(client, query):
                 result = generate_time(query_timezone, ["countryCode"])
             else:
                 result = generate_time(query_timezone, ["zoneName", "countryName"])
-
+                
             if not result:
-                result = f"Timezone info not available for <b>{lel}</b>"
+                result = (
+                    f"Timezone info not available for <b>{lel}</b>"
+                )
 
             results.append(
                 InlineQueryResultArticle(
@@ -842,7 +864,7 @@ async def inline_query_handler(client, query):
                 )
             )
             await client.answer_inline_query(query.id, cache_time=0, results=results)
-
+            
         elif text.split()[0] == "app":
             rip = []
             app_name = text.split(None, 1)[1]
@@ -855,14 +877,9 @@ async def inline_query_handler(client, query):
             soup = BeautifulSoup(page.content, "lxml", from_encoding="utf-8")
             results = soup.findAll("div", "ZmHEEd")
             app_name = (
-                results[0]
-                .findNext("div", "Vpfmgd")
-                .findNext("div", "WsMG1c nnK0zc")
-                .text
+                results[0].findNext("div", "Vpfmgd").findNext("div", "WsMG1c nnK0zc").text
             )
-            app_dev = (
-                results[0].findNext("div", "Vpfmgd").findNext("div", "KoLSrc").text
-            )
+            app_dev = results[0].findNext("div", "Vpfmgd").findNext("div", "KoLSrc").text
             app_dev_link = (
                 "https://play.google.com"
                 + results[0].findNext("div", "Vpfmgd").findNext("a", "mnKHRc")["href"]
@@ -918,7 +935,7 @@ async def inline_query_handler(client, query):
                 )
             )
             await client.answer_inline_query(query.id, cache_time=0, results=rip)
-
+            
         elif text.split()[0] == "gh":
             results = []
             gett = text.split(None, 1)[1]
@@ -944,10 +961,10 @@ async def inline_query_handler(client, query):
                 )
             )
             await client.answer_inline_query(query.id, cache_time=0, results=results)
-
+            
         elif text.split()[0] == "so":
             results = []
-            gett = text.split(None, 1)[1]
+            gett = text.split(None, 1)[1] 
             text = gett + ' "site:stackoverflow.com"'
             gresults = await GoogleSearch().async_search(text, 1)
             result = ""
@@ -970,10 +987,16 @@ async def inline_query_handler(client, query):
                 )
             )
             await client.answer_inline_query(query.id, cache_time=0, results=results)
+            
 
     except (IndexError, TypeError, KeyError, ValueError):
         return
 
+
+async def aexec(code, client):
+    exec(f"async def __aexec(client): " + "".join(f"\n {l}" for l in code.split("\n")))
+    return await locals()["__aexec"](client)
+ 
 
 def generate_time(to_find: str, findtype: List[str]) -> str:
     data = requests.get(
