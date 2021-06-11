@@ -1,22 +1,3 @@
-# Copyright (C) 2018 - 2020 MrYacha. All rights reserved. Source code available under the AGPL.
-# Copyright (C) 2021 TeamDaisyX
-# Copyright (C) 2020 Inuka Asith
-
-# This file is part of Daisy (Telegram Bot)
-
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as
-# published by the Free Software Foundation, either version 3 of the
-# License, or (at your option) any later version.
-
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-
-# You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 import random
 from contextlib import suppress
 
@@ -45,16 +26,16 @@ def help_markup(modules):
 
 
 STICKERS = (
-    "CAACAgUAAxkBAAJOGmBeli95P073FKVkgc4esfKE4UlXAAIOAgACyavAVkbLMIidWYdyHgQ",
-    "CAACAgUAAxkBAAJOG2BeljABwlCfwzHT1gzyiciBri6_AAIsAgACXBPBVgpGQRz-1qmlHgQ",
-    "CAACAgUAAxkBAAJOHGBeljOJ35CQNnkpnVcgRoHuJX6DAAL3AQACN8TBVm1PIART01cWHgQ",
-    "CAACAgUAAxkBAAJOHWBeljXW9QzYQ51gpCjHZHCF5Ui6AAJ7AgAC3zDBVo2xenp7JYhAHgQ",
-    "CAACAgUAAxkBAAJOHmBeljjU0_FT_QpdUUJBqVUC0nfJAAKYAgACJ_jBVvntHY_8WF27HgQ",
-    "CAACAgUAAxkBAAJOH2BeljrV68mPLu8_6n4edT20Q3IQAAJ9AgACq3LBVmLuZuNPlvkfHgQ",
-    "CAACAgUAAxkBAAJOIGBeljttuniUPykRtzkSZj3SRwKJAAI7AgACNm_BVp8TCkE6ZqCoHgQ",
-    "CAACAgUAAxkBAAJOIWBelj-P_2vtVqtkF2OMlVN3M0N4AAK3AQACSm3BVkXF2voraS2tHgQ",
-    "CAACAgUAAxkBAAJOImBelkJxUBm2rL1iPfMZfk-_9DaOAALrAgAC4T3BVniopXQVsZ4KHgQ",
-    "CAACAgUAAxkBAAJOI2BelkMO0AX_wtAc7hUZz1NixuMlAAKEAwACY4TAViVuNLTBmmkgHgQ",
+    "CAACAgEAAxkBAAK-yWDDLbCwTfWuzsCKMDxnHDlAZo0DAAJWBwACkSkAARB008PTHM-zfx8E",
+    "CAACAgEAAxkBAAK-zWDDLbJJKCiye2uZNvLjm0SaGo9nAAJUBwACkSkAARBepfUNuX2FFR8E",
+    "CAACAgEAAxkBAAK-0WDDLbTnV2-5AAEzMyONyxM0TOsgFgACVwcAApEpAAEQ2NrApEkRzd8fBA",
+    "CAACAgEAAxkBAAK-1WDDLbW8_3Zzv97XbhoiawoLntlmAAJmBwACkSkAARCWcnf22vocFR8E",
+    "CAACAgEAAxkBAAK-2WDDLbc4yl3TKUw6lQiC_deV7FODAAJ9BwACkSkAARACgFF2Zh-HeB8E",
+    "CAACAgEAAxkBAAK-3WDDLbms-F9NctyDL6WmLFljNE3-AAKLBwACkSkAARBZ0spBpDdbUh8E",
+    "CAACAgEAAxkBAAK-4WDDLboRbrgofODiums-nn4as-TnAAKSBwACkSkAARD8oJ4a26rX7x8E",
+    "CAACAgEAAxkBAAK-5WDDLbxKiBHSicMtlrxrbN9CsE7DAALbBwACkSkAARAdQ9V36IbP7h8E",
+    "CAACAgEAAxkBAAK-6WDDLb1qFiul5PDv4G26HEiVFlMNAAL0BwACkSkAARDT9LeFEZq8Fx8E",
+    "CAACAgEAAxkBAAK-7WDDLlKqu3Jmq9E403G81GjOyTClAAL_BwACkSkAARBUOoUAAczy_yIfBA",
 )
 
 
@@ -81,19 +62,17 @@ async def get_start_func(message, strings, edit=False):
     buttons.add(
         InlineKeyboardButton(strings["btn_lang"], callback_data="lang_btn"),
         InlineKeyboardButton(
-            strings["btn_source"], url="https://github.com/TeamDaisyX/"
+            strings["btn_source"], url="https://t.me/Yeageristbotsdev"
         ),
     )
     buttons.add(
-        InlineKeyboardButton(strings["btn_channel"], url="https://t.me/DaisyXUpdates"),
-        InlineKeyboardButton(
-            strings["btn_group"], url="https://t.me/DaisySupport_Official"
-        ),
+        InlineKeyboardButton(strings["btn_channel"], url="https://t.me/Anime_Realms"),
+        InlineKeyboardButton("👥 Support Grup", url="https://t.me/anime_realms_chats"),
     )
     buttons.add(
         InlineKeyboardButton(
-            "👸🏼 Add DaisyX to your group",
-            url=f"https://telegram.me/daisyxbot?startgroup=true",
+            "👸🏼 Add Rengoku Kyujoro to your group",
+            url=f"https://telegram.me/RengokuKyujoro_RealmsBot?startgroup=true",
         )
     )
     # Handle error when user click the button 2 or more times simultaneously
@@ -135,7 +114,7 @@ async def help_cmd(message, strings):
 async def help_cmd_g(message, strings):
     text = strings["btn_group_help"]
     button = InlineKeyboardMarkup().add(
-        InlineKeyboardButton(text=text, url="https://t.me/DaisyXBOT?start")
+        InlineKeyboardButton(text=text, url="https://t.me/RengokuKyujoro_RealmsBot?start")
     )
     await message.reply(strings["help_header"], reply_markup=button)
 
